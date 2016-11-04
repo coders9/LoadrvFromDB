@@ -1,11 +1,13 @@
 package com.loadrv.dbdemo.pojo;
 
+import android.graphics.Bitmap;
+
 /**
  * Created by mc11 on 2/11/16.
  */
 
 public class ChannelList {
-    String thumbnailurl;
+    String  thumbnailurl;
     String Title;
     String description;
     String datetime;

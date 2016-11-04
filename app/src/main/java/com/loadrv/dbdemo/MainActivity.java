@@ -15,6 +15,8 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.loadrv.dbdemo.model.adapter.RVAdapter;
+import com.loadrv.dbdemo.model.database.SaveInDatabase;
+import com.loadrv.dbdemo.model.helper.Utils;
 import com.loadrv.dbdemo.pojo.ChannelList;
 
 import org.json.JSONArray;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String url ="https://www.googleapis.com/youtube/v3/search?part=id,snippet&maxResults=20&channelId=UCCq1xDJMBRF61kiOgU90_kw&key=AIzaSyBRLPDbLkFnmUv13B-Hq9rmf0y7q8HOaVs";
     List<ChannelList> rlist = new ArrayList<>();
     RVAdapter madapter;
+    SaveInDatabase mdatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         madapter = new RVAdapter(this,rlist);
         mRecyclerView.setAdapter(madapter);
+        mdatabase = new SaveInDatabase(this);
         sendRequest();
 
     }
@@ -51,7 +55,13 @@ public class MainActivity extends AppCompatActivity {
         pDialog.setMessage("Loading...");
         pDialog.show();
 
-
+        if (getNetworkAvailability()) {
+            getFeed();
+        } else {
+            getFeedFromDatabase();
+        }
+    }
+    private void getFeed(){
 // Creating volley request obj
         JsonObjectRequest mchannelReq = new JsonObjectRequest(Request.Method.GET, url, null,
                 new Response.Listener<JSONObject>() {
@@ -122,5 +132,11 @@ public class MainActivity extends AppCompatActivity {
 
         RequestQueue requestueue = Volley.newRequestQueue(this);
         requestueue.add(mchannelReq);
+    }
+    private void getFeedFromDatabase() {
+        mdatabase.getallData();
+    }
+    public boolean getNetworkAvailability() {
+        return Utils.isNetworkAvailable(getApplicationContext());
     }
 }
